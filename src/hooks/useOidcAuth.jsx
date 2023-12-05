@@ -1,6 +1,4 @@
-
 import { useAuth } from "react-oidc-context";
-import toast from "react-hot-toast";
 export default function useOidcAuth() {
   const auth = useAuth();
 

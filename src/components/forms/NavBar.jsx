@@ -1,5 +1,5 @@
 import React from "react";
-import useOidcAuth from "../../hooks/useOidcAuth";
+import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { classNames } from "../inputs/TextInput";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -9,7 +9,8 @@ import { useNavigation } from "../../contexts/NavigationContext";
 import logo from "../../assets/react.svg";
 
 export default function NavBar() {
-  const { isAuthenticated, user, isLoading } = useOidcAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
+  console.log("Nav " + isAuthenticated);
 
   const { navigation, handleNavigationClick } = useNavigation();
 

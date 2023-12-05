@@ -1,15 +1,25 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 const NavigationContext = createContext();
 
-export const useNavigation = () => useContext(NavigationContext);
-
+export function useNavigation() {
+  return useContext(NavigationContext);
+}
 export const NavigationProvider = ({ children }) => {
-  const [navigation, setNavigation] = useState([
-    { name: "Intro", href: "/", current: false },
-    { name: "Home", href: "/home", current: false },
-    { name: "Price", href: "#", current: false },
-  ]);
+  const { isAuthenticated, error } = useAuth();
+  const [navigation, setNavigation] = useState([]);
+
+  useEffect(() => {
+    const navItems = [{ name: "Price", href: "#", current: false }];
+    if (isAuthenticated) {
+      navItems.unshift({ name: "Home", href: "/home", current: false });
+    } else {
+      navItems.unshift({ name: "Intro", href: "/", current: false });
+    }
+
+    setNavigation(navItems);
+  }, [isAuthenticated]);
 
   const handleNavigationClick = (name) => {
     setNavigation(

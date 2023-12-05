@@ -1,4 +1,4 @@
-import useOidcAuth from "../../hooks/useOidcAuth";
+import { useAuth } from "../../contexts/AuthContext";
 import { classNames } from "../../utilities/utils";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import Spinner from "../spinner/Spinner";
@@ -16,7 +16,7 @@ const signoutStyleClass = [
 ];
 
 export default function AuthButton() {
-  const { isAuthenticated, signIn, signOut, isLoading } = useOidcAuth();
+  const { isAuthenticated, signIn, signOut, isLoading } = useAuth();
 
   const buttonStyleClass = isAuthenticated ? signoutStyleClass : signStyleClass;
   const handleButtonClick = isAuthenticated ? signOut : signIn;
