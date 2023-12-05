@@ -14,10 +14,11 @@ import logo from "../../assets/react.svg";
 
 export default function NavBar() {
   const navigate = useNavigate();
-  const { isAuthenticated, user, signIn, isLoading } = useOidcAuth();
+  const { isAuthenticated, user, signIn, signOut, isLoading } = useOidcAuth();
 
   const [navigation, setNavigation] = useState([
-    { name: "Home", href: "/", current: true },
+    { name: "Intro", href: "/", current: true },
+    { name: "Home", href: "/home", current: false },
     { name: "Price", href: "#", current: false },
   ]);
 
@@ -48,8 +49,6 @@ export default function NavBar() {
       </Link>
     ));
   }
-
-
 
   return (
     <header>
@@ -85,10 +84,27 @@ export default function NavBar() {
                   <button
                     onClick={signIn}
                     type="button"
-                    className="flex space-x-2 m-0 shadow-md text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    className="flex space-x-2 m-0 shadow-md text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5   focus:outline-none"
                   >
-                    {isLoading ? <Spinner /> : <ArrowRightOnRectangleIcon className="h-6 w-6 text-lg" />}
+                    {isLoading ? (
+                      <Spinner />
+                    ) : (
+                      <ArrowRightOnRectangleIcon className="h-6 w-6 text-lg" />
+                    )}
                     <span className="text-lg">Login</span>
+                  </button>
+
+                  <button
+                    onClick={signOut}
+                    type="button"
+                    className="flex space-x-2 m-0 shadow-md text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5  focus:outline-none"
+                  >
+                    {isLoading ? (
+                      <Spinner />
+                    ) : (
+                      <ArrowRightOnRectangleIcon className="h-6 w-6 text-lg" />
+                    )}
+                    <span className="text-lg">signOut</span>
                   </button>
                 </div>
               </div>

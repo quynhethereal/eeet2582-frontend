@@ -11,16 +11,17 @@ const appOrigin = window.location.origin;
 const client_secret = import.meta.env.VITE_CLIENT_SECRET;
 
 const oidcConfig = {
-    authority: oauthProvider,
-    client_id: githubClientId,
-    redirect_uri: appOrigin,
-    client_secret: client_secret,
+  authority: oauthProvider,
+  client_id: githubClientId,
+  redirect_uri: appOrigin,
+  client_secret: client_secret,
+  scope: "email profile",
 };
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-        <AuthProvider {...oidcConfig}>
-            <App />
-        </AuthProvider>
-    </React.StrictMode>
+  <React.StrictMode>
+    <AuthProvider {...oidcConfig}>
+      <App />
+    </AuthProvider>
+  </React.StrictMode>
 );
