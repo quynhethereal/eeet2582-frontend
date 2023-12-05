@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {AuthProvider} from "react-oidc-context";
+import { AuthProvider } from "react-oidc-context";
 import App from "./App.jsx";
 import "./index.css";
 
@@ -20,7 +20,7 @@ const oidcConfig = {
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <AuthProvider {...oidcConfig}>
-            <App/>
+            <App />
         </AuthProvider>
     </React.StrictMode>
 );

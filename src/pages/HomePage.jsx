@@ -1,23 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import NavBar from "../components/forms/NavBar";
 
 export default function HomePage() {
-  return (
-    <>
-      <NavBar />
+    return (
+        <>
+            <NavBar />
 
-      <div className="mt-6 flex flex-col justify-center items-center">
-        <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
-          Welcome to ProofReading App
-        </h1>
-        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48">
-          Helping all writter to get easy grammar fix by reading through
-          uploading pdf document.
-        </p>
-        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48">
-          The app is only authorized by using GitHub protocal.
-        </p>
-      </div>
-    </>
-  );
+            <h1 className="text-lx mt-10"> This is our app home page</h1>
+
+        </>
+    )
 }

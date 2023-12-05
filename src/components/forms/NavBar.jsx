@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Spinner from "../spinner/Spinner";
 import useOidcAuth from "../../hooks/useOidcAuth";
 import { useNavigate, Link } from "react-router-dom";
 import { classNames } from "../inputs/TextInput";
@@ -13,7 +14,7 @@ import logo from "../../assets/react.svg";
 
 export default function NavBar() {
   const navigate = useNavigate();
-  const { isAuthenticated, user, signIn } = useOidcAuth();
+  const { isAuthenticated, user, signIn, isLoading } = useOidcAuth();
 
   const [navigation, setNavigation] = useState([
     { name: "Home", href: "/", current: true },
@@ -47,6 +48,8 @@ export default function NavBar() {
       </Link>
     ));
   }
+
+
 
   return (
     <header>
@@ -84,8 +87,8 @@ export default function NavBar() {
                     type="button"
                     className="flex space-x-2 m-0 shadow-md text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                   >
-                    <ArrowRightOnRectangleIcon className="h-6 w-6" />
-                    <span>Login</span>
+                    {isLoading ? <Spinner /> : <ArrowRightOnRectangleIcon className="h-6 w-6 text-lg" />}
+                    <span className="text-lg">Login</span>
                   </button>
                 </div>
               </div>

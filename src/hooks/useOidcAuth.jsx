@@ -8,8 +8,9 @@ export default function useOidcAuth() {
   }
 
   function signOut() {
-    void auth.removeUser();
+    return auth.removeUser();
   }
+
 
   return {
     ...auth,

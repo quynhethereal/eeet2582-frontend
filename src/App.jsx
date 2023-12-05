@@ -1,43 +1,22 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import HomePage from "./pages/HomePage";
+import IntroPage from "./pages/IntroPage";
 import AuthenPage from "./pages/AuthenPage";
+import HomePage from "./pages/HomePage"
 
 import "./App.css";
-import {useAuth} from "react-oidc-context";
 
-function App() {
-    const auth = useAuth();
+export default function App() {
+    return (
+        <>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<IntroPage />}></Route>
+                    <Route path="/home" element={<HomePage />}></Route>
+                    <Route path="/authentication" element={<AuthenPage />}></Route>
+                </Routes>
+            </BrowserRouter>
+        </>
+    );
 
-    switch (auth.activeNavigator) {
-        case "signinSilent":
-            return <div>Signing you in...</div>;
-        case "signoutRedirect":
-            return <div>Signing you out...</div>;
-    }
-
-    if (auth.isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (auth.error) {
-        return <div>Oops... {auth.error.message}</div>;
-    }
-
-    if (auth.isAuthenticated) {
-        return (
-            <>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<HomePage />}></Route>
-                        <Route path="/authentication" element={<AuthenPage />}></Route>
-                    </Routes>
-                </BrowserRouter>
-            </>
-        );
-    }
-
-    return <button onClick={() => void auth.signinRedirect()}>Log in</button>;
 }
-
-export default App;
