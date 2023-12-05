@@ -1,30 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import useOidcAuth from "../../hooks/useOidcAuth";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { classNames } from "../inputs/TextInput";
 import { Disclosure, Transition } from "@headlessui/react";
 import AuthButton from "../AuthButton/AuthButton";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useNavigation } from "../../contexts/NavigationContext";
 import logo from "../../assets/react.svg";
 
 export default function NavBar() {
-  const navigate = useNavigate();
   const { isAuthenticated, user, isLoading } = useOidcAuth();
 
-  const [navigation, setNavigation] = useState([
-    { name: "Intro", href: "/", current: true },
-    { name: "Home", href: "/home", current: false },
-    { name: "Price", href: "#", current: false },
-  ]);
-
-  const handleNavigationClick = (name) => {
-    setNavigation(
-      navigation.map((item) => ({
-        ...item,
-        current: item.name === name,
-      }))
-    );
-  };
+  const { navigation, handleNavigationClick } = useNavigation();
 
   function generateNavLink() {
     return navigation.map((item) => (

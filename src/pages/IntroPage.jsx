@@ -2,8 +2,7 @@ import React from "react";
 
 import NavBar from "../components/forms/NavBar";
 import toast from "react-hot-toast";
-import MyToaster from "../components/Toaster/MyToaster";
-
+import MyToaster from "../components/toaster/MyToaster";
 export default function IntroPage() {
   return (
     <>
