@@ -1,12 +1,13 @@
 import React from "react";
 
 import NavBar from "../components/forms/NavBar";
+import toast from "react-hot-toast";
+import MyToaster from "../components/Toaster/MyToaster";
 
 export default function IntroPage() {
   return (
     <>
       <NavBar />
-
       <div className="mt-6 flex flex-col justify-center items-center">
         <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
           Welcome to ProofReading App
@@ -19,6 +20,7 @@ export default function IntroPage() {
           The app is only authorized by using Google protocal.
         </p>
       </div>
+      <MyToaster />
     </>
   );
 }

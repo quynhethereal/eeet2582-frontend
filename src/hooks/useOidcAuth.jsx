@@ -1,5 +1,6 @@
-import { useAuth } from "react-oidc-context";
 
+import { useAuth } from "react-oidc-context";
+import toast from "react-hot-toast";
 export default function useOidcAuth() {
   const auth = useAuth();
 
@@ -10,7 +11,6 @@ export default function useOidcAuth() {
   function signOut() {
     return auth.removeUser();
   }
-
 
   return {
     ...auth,
