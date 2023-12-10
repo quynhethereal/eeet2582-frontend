@@ -10,7 +10,7 @@ export const NavigationProvider = ({ children }) => {
   const [navigation, setNavigation] = useState([]);
 
   useEffect(() => {
-    const navItems = [{ name: "Price", href: "#", current: false }];
+    const navItems = [{ name: "Price", href: "/price", current: false }];
     if (isAuthenticated) {
       navItems.unshift({ name: "Home", href: "/home", current: true });
     } else {
