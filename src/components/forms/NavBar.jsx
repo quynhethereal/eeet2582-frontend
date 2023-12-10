@@ -10,7 +10,6 @@ import logo from "../../assets/react.svg";
 
 export default function NavBar() {
   const { isAuthenticated, user, isLoading } = useAuth();
-  console.log("Nav " + isAuthenticated);
 
   const { navigation, handleNavigationClick } = useNavigation();
 

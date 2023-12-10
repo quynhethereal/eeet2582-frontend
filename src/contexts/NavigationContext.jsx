@@ -1,6 +1,5 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import { useAuth } from "./AuthContext";
-
 const NavigationContext = createContext();
 
 export function useNavigation() {
@@ -13,9 +12,9 @@ export const NavigationProvider = ({ children }) => {
   useEffect(() => {
     const navItems = [{ name: "Price", href: "#", current: false }];
     if (isAuthenticated) {
-      navItems.unshift({ name: "Home", href: "/home", current: false });
+      navItems.unshift({ name: "Home", href: "/home", current: true });
     } else {
-      navItems.unshift({ name: "Intro", href: "/", current: false });
+      navItems.unshift({ name: "Intro", href: "/", current: true });
     }
 
     setNavigation(navItems);

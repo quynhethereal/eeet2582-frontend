@@ -7,6 +7,7 @@ export default function useOidcAuth() {
   }
 
   function signOut() {
+    localStorage.clear();
     return auth.removeUser();
   }
 

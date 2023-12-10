@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import MyToaster from "../components/Toaster/MyToaster";
-import NavBar from "../components/forms/NavBar";
 import toast from "react-hot-toast";
 
 export default function IntroPage() {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log("execute");
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated]);
   return (
     <>
-      <NavBar />
       <div className="mt-6 flex flex-col justify-center items-center">
         <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
           Welcome to ProofReading App
