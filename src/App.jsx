@@ -1,26 +1,28 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { NavigationProvider } from "./contexts/NavigationContext";
-
-import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/Route/ProtectedRoute";
 import IntroPage from "./pages/IntroPage";
 import HomePage from "./pages/HomePage";
 import NavBar from "./components/forms/NavBar";
+import PricePage from "./pages/PricePage";
 import "./App.css";
 
 export default function App() {
   return (
-    <>
-      <AuthProvider>
-        <NavigationProvider>
-          <BrowserRouter>
-            <NavBar />
-            <Routes>
-              <Route key="1" path="/" element={<IntroPage />}></Route>
-              <Route key="2" path="/home" element={<HomePage />}></Route>
-            </Routes>
-          </BrowserRouter>
-        </NavigationProvider>
-      </AuthProvider>
-    </>
+    <BrowserRouter>
+      <NavBar />
+      <Routes>
+        <Route key="1" path="/" element={<IntroPage />}></Route>
+        <Route
+          key="2"
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route key="3" path="/price" element={<PricePage />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }

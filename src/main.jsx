@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { AuthProvider } from "react-oidc-context";
+import { AuthProvider as CustomAuthProvider } from "./contexts/AuthContext";
+import { NavigationProvider } from "./contexts/NavigationContext";
+
 import App from "./App.jsx";
 import "./index.css";
 
@@ -21,7 +24,11 @@ const oidcConfig = {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider {...oidcConfig}>
-      <App />
+      <CustomAuthProvider>
+        <NavigationProvider>
+          <App />
+        </NavigationProvider>
+      </CustomAuthProvider>
     </AuthProvider>
   </React.StrictMode>
 );
