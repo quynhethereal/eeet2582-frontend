@@ -21,17 +21,17 @@ function CurrentPlanDisplay({
       {/* Conditionally display plan details based on status */}
       {currentUserPlan.status === "active" && (
         <p className="text-xl text-gray-600">
-          Next charge on: {currentUserPlan.endDate}
+          Next charge on: {currentUserPlan.end_date}
         </p>
       )}
       {currentUserPlan.status === "endsoon" && (
         <p className="text-xl text-red-600">
-          Subscription ending on: {currentUserPlan.endDate}
+          Subscription ending on: {currentUserPlan.end_date}
         </p>
       )}
       {currentUserPlan.status === "trialing" && (
         <p className="text-xl text-red-600">
-          Subscription ending on: {currentUserPlan.endDate}
+          Subscription ending on: {currentUserPlan.end_date}
         </p>
       )}
       {currentUserPlan.status === "cancelled" && (
