@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import axios from "axios";
 import SubscriptionOption from "../components/Subscription/SubscriptionOption";
+import PaymentModal from "../components/Subscription/PaymentModal";
 
 export default function PricePage() {
   let [message, setMessage] = useState("");
@@ -9,6 +10,11 @@ export default function PricePage() {
   let [token, setToken] = useState();
   let [success, setSuccess] = useState(false);
   let [sessionId, setSessionId] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [currentUserPlan, setCurrentUserPlan] = useState({
+    planName: "",
+    price: -1,
+  });
 
   useEffect(() => {
     // Check to see if this is a redirect back from Checkout
@@ -16,17 +22,14 @@ export default function PricePage() {
 
     if (query.get("success")) {
       setSuccess(true);
-      setSessionId(query.get("session_id"));
-      console.log("success payment: ", sessionId);
+      setMessage("Payment successful!");
+      setShowModal(true);
     }
 
     if (query.get("canceled")) {
       setSuccess(false);
-      setMessage(
-        "Order canceled -- continue to shop around and checkout when you're ready."
-      );
-
-      console.log(message);
+      setMessage("Payment canceled. Please try again.");
+      setShowModal(true);
     }
   }, [sessionId, isAuthenticated, user]);
 
@@ -42,18 +45,39 @@ export default function PricePage() {
   }, [isAuthenticated, user]);
 
   useEffect(() => {
-    console.log("token after set", token);
-  }, [token]);
-
-  // Mock current plan data - replace with real data as needed
-  const currentUserPlan = {
-    duration: "6 Months",
-    price: "$19.99",
-  };
+    if (isAuthenticated && token) {
+      fetchCurrentUserPlan();
+    }
+  }, [isAuthenticated, token]);
 
   const handleCancelSubscription = () => {
     // Logic to handle subscription cancellation
     console.log("Subscription Cancelled");
+  };
+
+  const fetchCurrentUserPlan = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_SERVER_ORIGIN}payment/create-checkout-session`, // Update with your actual endpoint
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.data) {
+        setCurrentUserPlan({
+          planName: response.data.plan_name, // Adjust these fields based on your actual response data
+          price: response.data.price,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching current user plan:", error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   const handleCheckOutSubmit = async (stripeProductKey) => {
@@ -92,11 +116,11 @@ export default function PricePage() {
       </h1>
 
       {/* Display Current Plan */}
-      <div className=" md:grid md:grid-cols-4 mb-10 p-4  bg-white rounded-lg shadow-lg text-center">
+      <div className="md:grid md:grid-cols-4 mb-10 p-4 bg-white rounded-lg shadow-lg text-center">
         <h2 className="text-2xl font-bold text-gray-800">Your Current Plan</h2>
-        <p className="text-2xl text-gray-600 ">{currentUserPlan.duration}</p>
-        <div className="text-2xl font-semibold text-gray-900 ">
-          {currentUserPlan.price}
+        <p className="text-2xl text-gray-600">{currentUserPlan.planName}</p>
+        <div className="text-2xl font-semibold text-gray-900">
+          ${currentUserPlan.price}
         </div>
         <button
           onClick={handleCancelSubscription}
@@ -138,6 +162,13 @@ export default function PricePage() {
           }
         />
       </div>
+
+      {/* Modal */}
+      <PaymentModal
+        show={showModal}
+        onClose={handleCloseModal}
+        title={success ? "Success" : "Canceled"}
+      ></PaymentModal>
     </div>
   );
 }
