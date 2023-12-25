@@ -1,14 +1,25 @@
-import React from "react";
-
 function SubscriptionOption({
   duration,
   description,
   price,
   buttonColor,
   onCheckout,
+  disabled = false,
 }) {
+  const disabledClass = "opacity-50 bg-gray-200";
+  const enabledClass = "hover:scale-110 bg-white";
+  const buttonDisabledClass = "bg-gray-400 cursor-not-allowed";
+  const buttonEnabledClass = `${buttonColor} hover:${buttonColor.replace(
+    "500",
+    "700"
+  )}`;
+
   return (
-    <div className="bg-white rounded-lg shadow p-6 hover:scale-110">
+    <div
+      className={`rounded-lg shadow p-6 ${
+        disabled ? disabledClass : enabledClass
+      }`}
+    >
       <h2 className="text-4xl font-bold text-gray-800">{duration}</h2>
       <p className="text-gray-600 mt-10">{description}</p>
 
@@ -16,10 +27,10 @@ function SubscriptionOption({
 
       <button
         onClick={onCheckout}
-        className={`mt-6 w-full ${buttonColor} text-white font-bold py-2 px-4 rounded hover:${buttonColor.replace(
-          "500",
-          "700"
-        )}`}
+        disabled={disabled}
+        className={`mt-6 w-full text-white font-bold py-2 px-4 rounded ${
+          disabled ? buttonDisabledClass : buttonEnabledClass
+        }`}
       >
         Subscribe
       </button>

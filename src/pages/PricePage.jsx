@@ -13,7 +13,9 @@ export default function PricePage() {
   const [showModal, setShowModal] = useState(false);
   const [currentUserPlan, setCurrentUserPlan] = useState({
     planName: "",
+    status: "",
     price: -1,
+    endDate: "",
   });
 
   useEffect(() => {
@@ -50,9 +52,25 @@ export default function PricePage() {
     }
   }, [isAuthenticated, token]);
 
-  const handleCancelSubscription = () => {
-    // Logic to handle subscription cancellation
-    console.log("Subscription Cancelled");
+  const handleCancelSubscription = async () => {
+    const bearerToken = token;
+    console.log("cancel", bearerToken);
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_SERVER_ORIGIN}/payment/create-checkout-session`,
+        {}, // The second argument is the request body. If no data needs to be sent, it can be an empty object.
+        {
+          headers: {
+            Authorization: `Bearer ${bearerToken}`,
+          },
+        }
+      );
+      if (response.data) {
+        console.log("cancel data: ", response.data);
+      }
+    } catch (error) {
+      console.error("Error canceling current user plan:", error);
+    }
   };
 
   const fetchCurrentUserPlan = async () => {
@@ -69,6 +87,8 @@ export default function PricePage() {
         setCurrentUserPlan({
           planName: response.data.plan_name, // Adjust these fields based on your actual response data
           price: response.data.price,
+          status: response.data.status,
+          endDate: response.data.end_date,
         });
       }
     } catch (error) {
@@ -77,6 +97,11 @@ export default function PricePage() {
   };
 
   const handleCloseModal = () => {
+    const url = new URL(window.location);
+    // Clear search parameters
+    url.search = "";
+    // Update the URL without reloading the page
+    window.history.pushState({}, "", url);
     setShowModal(false);
   };
 
@@ -115,22 +140,7 @@ export default function PricePage() {
         Choose Your Subscription Plan
       </h1>
 
-      {/* Display Current Plan */}
-      <div className="md:grid md:grid-cols-4 mb-10 p-4 bg-white rounded-lg shadow-lg text-center">
-        <h2 className="text-2xl font-bold text-gray-800">Your Current Plan</h2>
-        <p className="text-2xl text-gray-600">{currentUserPlan.planName}</p>
-        <div className="text-2xl font-semibold text-gray-900">
-          ${currentUserPlan.price}
-        </div>
-        <button
-          onClick={handleCancelSubscription}
-          className="md:mt-0 mt-6 py-2 px-6 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white transition ease-in-out duration-300"
-        >
-          Cancel Subscription
-        </button>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-1">
         {/* 3 Months Subscription */}
         <SubscriptionOption
           duration="3 Months"
@@ -140,35 +150,70 @@ export default function PricePage() {
           onCheckout={() =>
             handleCheckOutSubmit(import.meta.env.VITE_PRODUCT_KEY_1)
           }
-        />
-        {/* 6 Months Subscription */}
-        <SubscriptionOption
-          duration="6 Months"
-          description="Medium-term access"
-          price="$19.99"
-          buttonColor="bg-amber-500"
-          onCheckout={() =>
-            handleCheckOutSubmit(import.meta.env.VITE_PRODUCT_KEY_1)
-          }
-        />
-        {/* 1 Year Subscription */}
-        <SubscriptionOption
-          duration="12 Months"
-          description="Long-term access"
-          price="$49.99"
-          buttonColor="bg-orange-500"
-          onCheckout={() =>
-            handleCheckOutSubmit(import.meta.env.VITE_PRODUCT_KEY_1)
+          disabled={
+            currentUserPlan.status !== "endsoon" &&
+            currentUserPlan.status !== "cancelled" &&
+            currentUserPlan.status !== "trialing"
           }
         />
       </div>
+      {/* Display Current Plan */}
+      {isAuthenticated && (
+        <div className="md:grid md:grid-cols-5 mt-10 p-3 gap-3 bg-white rounded-lg shadow-lg text-center">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Your Current Plan
+          </h2>
+          <p className="text-2xl text-gray-600">{currentUserPlan.planName}</p>
+          <div className="text-2xl font-semibold text-gray-900">
+            ${currentUserPlan.price}
+          </div>
+
+          {/* Conditionally display plan details based on status */}
+          {currentUserPlan.status === "active" && (
+            <p className="text-xl text-gray-600">
+              Next charge on: {currentUserPlan.endDate}
+            </p>
+          )}
+          {currentUserPlan.status === "endsoon" && (
+            <p className="text-xl text-red-600">
+              Subscription ending on: {currentUserPlan.endDate}
+            </p>
+          )}
+          {currentUserPlan.status === "trialing" && (
+            <p className="text-xl text-red-600">
+              Subscription ending on: {currentUserPlan.endDate}
+            </p>
+          )}
+          {currentUserPlan.status === "cancelled" && (
+            <p className="text-xl text-red-600">Your plan is cancelled</p>
+          )}
+
+          <button
+            onClick={handleCancelSubscription}
+            disabled={
+              currentUserPlan.status === "endsoon" ||
+              currentUserPlan.status === "cancelled"
+            }
+            className={`md:mt-0 mt-6 py-2 px-6 border border-red-500 text-red-500 rounded ${
+              currentUserPlan.status === "endsoon" ||
+              currentUserPlan.status === "cancelled"
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-red-500 hover:text-white transition ease-in-out duration-300"
+            }`}
+          >
+            Cancel Subscription
+          </button>
+        </div>
+      )}
 
       {/* Modal */}
       <PaymentModal
         show={showModal}
         onClose={handleCloseModal}
         title={success ? "Success" : "Canceled"}
-      ></PaymentModal>
+      >
+        {message}
+      </PaymentModal>
     </div>
   );
 }
