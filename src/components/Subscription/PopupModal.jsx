@@ -1,6 +1,6 @@
 import React from "react";
 
-function PaymentModal({ show, onClose, title, children }) {
+function PopupModal({ show, onClose, title, children }) {
   if (!show) {
     return null;
   }
@@ -21,4 +21,4 @@ function PaymentModal({ show, onClose, title, children }) {
   );
 }
 
-export default PaymentModal;
+export default PopupModal;
