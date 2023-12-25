@@ -5,6 +5,7 @@ function CurrentPlanDisplay({
   isAuthenticated,
   handleCancelSubscription,
 }) {
+  console.log(currentUserPlan);
   if (!isAuthenticated) {
     return null;
   }
@@ -12,7 +13,7 @@ function CurrentPlanDisplay({
   return (
     <div className="md:grid md:grid-cols-5 mt-10 p-3 gap-3 bg-white rounded-lg shadow-lg text-center">
       <h2 className="text-2xl font-bold text-gray-800">Your Current Plan</h2>
-      <p className="text-2xl text-gray-600">{currentUserPlan.planName}</p>
+      <p className="text-2xl text-gray-600">{currentUserPlan.plan_name}</p>
       <div className="text-2xl font-semibold text-gray-900">
         ${currentUserPlan.price}
       </div>
