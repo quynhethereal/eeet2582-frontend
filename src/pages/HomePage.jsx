@@ -49,7 +49,7 @@ export default function HomePage() {
     let formData = new FormData();
     formData.append("file", uploadedFile);
     try {
-      const response = await fetch("/api/upload", {
+      const response = await fetch("/api/parse-docx", {
         method: "POST",
         body: formData,
       });
