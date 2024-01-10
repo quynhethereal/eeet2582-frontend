@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import MyToaster from "../components/Toaster/MyToaster";
 import { useAuth } from "../contexts/AuthContext";
 import { jwtDecode } from "jwt-decode";
@@ -10,6 +11,7 @@ export default function HomePage() {
   const [userData, setUserData] = useState();
   const [uploadedFile, setUploadedFile] = useState(null);
   const [downloadLink, setDownloadLink] = useState("");
+  const [token, setToken] = useState();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -21,6 +23,7 @@ export default function HomePage() {
     }
     if (user?.id_token) {
       setUserData(jwtDecode(user.id_token));
+      setToken(user.access_token);
     }
   }, [isAuthenticated, user, navigate]);
 
@@ -46,23 +49,33 @@ export default function HomePage() {
 
   const uploadFile = async () => {
     if (!uploadedFile) return;
-    let formData = new FormData();
-    formData.append("file", uploadedFile);
-    try {
-      const response = await fetch("/api/parse-docx", {
-        method: "POST",
-        body: formData,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setDownloadLink(data.processedFileLink);
-      } else {
-        console.error("File upload failed");
+  
+    const formData = new FormData();
+    formData.append('docx_file', uploadedFile);
+  
+    if (token) {
+      try {
+        console.log("testing")
+        const response = await axios.post('http://127.0.0.1:8000/api/parse-docx', formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data', // Set content type for FormData
+          },
+        });
+  
+        if (response.status === 200) {
+          const data = response.data;
+          //setDownloadLink(data.processedFileLink);
+          console.log("Success")
+        } else {
+          console.error("File upload failed");
+        }
+      } catch (error) {
+        console.error("Upload error: ", error);
       }
-    } catch (error) {
-      console.error("Upload error: ", error);
     }
   };
+  
 
   return (
     <>
