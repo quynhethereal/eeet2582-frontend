@@ -2,13 +2,18 @@ import React, { useState, useCallback } from "react";
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
 import { isValidFileType } from "../../utilities/utils";
 
-function DragDropFileUpload({ onFileDrop }) {
+function DragDropFileUpload({ onFileDrop, isProcessing }) {
   const [isDragging, setIsDragging] = useState(false);
 
-  const handleDragOver = useCallback((event) => {
-    event.preventDefault();
-    setIsDragging(true);
-  }, []);
+  const handleDragOver = useCallback(
+    (event) => {
+      if (!isProcessing) {
+        event.preventDefault();
+        setIsDragging(true);
+      }
+    },
+    [isProcessing]
+  );
 
   const handleDragLeave = useCallback(() => {
     setIsDragging(false);
@@ -16,19 +21,21 @@ function DragDropFileUpload({ onFileDrop }) {
 
   const handleDrop = useCallback(
     (event) => {
-      event.preventDefault();
-      setIsDragging(false);
-      const files = event.dataTransfer.files;
-      if (files.length) {
-        const file = files[0];
-        if (isValidFileType(file.name)) {
-          onFileDrop(file);
-        } else {
-          alert("Please drop a Word document (.doc or .docx)");
+      if (!isProcessing) {
+        event.preventDefault();
+        setIsDragging(false);
+        const files = event.dataTransfer.files;
+        if (files.length) {
+          const file = files[0];
+          if (isValidFileType(file.name)) {
+            onFileDrop(file);
+          } else {
+            alert("Please drop a Word document (.doc or .docx)");
+          }
         }
       }
     },
-    [onFileDrop]
+    [onFileDrop, isProcessing]
   );
 
   return (
@@ -37,7 +44,11 @@ function DragDropFileUpload({ onFileDrop }) {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       className={`border-2 border-dashed rounded-lg p-10 m-10 text-center cursor-pointer relative ${
-        isDragging ? "border-blue-500" : "border-gray-300"
+        isProcessing
+          ? "opacity-50 cursor-not-allowed"
+          : isDragging
+            ? "border-blue-500"
+            : "border-gray-300"
       }`}
     >
       {isDragging && (

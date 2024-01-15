@@ -6,11 +6,17 @@ import { useAuth } from "../contexts/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import DragDropFileUpload from "../components/upload/DragDropFileUpload";
 import { isValidFileType, formatFileSize } from "../utilities/utils";
+import Spinner from "../components/spinner/Spinner";
 
 export default function HomePage() {
   const [userData, setUserData] = useState();
   const [uploadedFile, setUploadedFile] = useState(null);
   const [downloadLink, setDownloadLink] = useState("");
+
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [taskStatus, setTaskStatus] = useState("");
+  const pollingInterval = useRef(null);
+
   const [token, setToken] = useState();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -49,24 +55,28 @@ export default function HomePage() {
 
   const uploadFile = async () => {
     if (!uploadedFile) return;
-  
+
     const formData = new FormData();
-    formData.append('docx_file', uploadedFile);
-  
+    formData.append("docx_file", uploadedFile);
+
     if (token) {
       try {
-        console.log("testing")
-        const response = await axios.post('http://127.0.0.1:8000/api/parse-docx', formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data', // Set content type for FormData
-          },
-        });
-  
-        if (response.status === 200) {
+        console.log("testing");
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/parse-docx",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data", // Set content type for FormData
+            },
+          }
+        );
+
+        if (response.status === 202) {
           const data = response.data;
-          //setDownloadLink(data.processedFileLink);
-          console.log("Success")
+          const { task_id } = response.data;
+          startPolling(task_id);
         } else {
           console.error("File upload failed");
         }
@@ -75,7 +85,37 @@ export default function HomePage() {
       }
     }
   };
-  
+
+  const startPolling = (taskId) => {
+    setIsProcessing(true);
+    pollingInterval.current = setInterval(() => checkTaskStatus(taskId), 1000);
+  };
+
+  const checkTaskStatus = async (taskId) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/task-status/${taskId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const { status, result } = response.data;
+      setTaskStatus(status);
+      console.log("Status: ", status);
+      if (status === "SUCCESS") {
+        clearInterval(pollingInterval.current);
+        setIsProcessing(false);
+        setDownloadLink(result.processedFileLink);
+      } else if (status === "FAILURE") {
+        clearInterval(pollingInterval.current);
+        setIsProcessing(false);
+        console.error("Processing failed");
+      }
+    } catch (error) {
+      console.error("Polling error: ", error);
+    }
+  };
 
   return (
     <>
@@ -85,7 +125,10 @@ export default function HomePage() {
         </h1>
 
         {/* Drag and Drop Section */}
-        <DragDropFileUpload onFileDrop={handleFileDrop} />
+        <DragDropFileUpload
+          onFileDrop={handleFileDrop}
+          isProcessing={isProcessing}
+        />
 
         {/* Display Uploaded File Information */}
         {uploadedFile && (
@@ -110,15 +153,18 @@ export default function HomePage() {
           />
           <button
             onClick={onCustomUploadFileButtonClicked}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none"
+            disabled={isProcessing} // Disable this button when isProcessing is true
+            className={`px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none ${
+              isProcessing ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             Select File
           </button>
           <button
             onClick={uploadFile}
-            disabled={!uploadedFile} // Disable the button if no valid file is selected
+            disabled={!uploadedFile || isProcessing} // Disable this button if no valid file is selected or if isProcessing is true
             className={`ml-2 px-4 py-2 rounded focus:outline-none ${
-              uploadedFile
+              uploadedFile && !isProcessing
                 ? "bg-green-500 hover:bg-green-700 text-white"
                 : "bg-gray-500 text-gray-300"
             }`}
@@ -126,6 +172,16 @@ export default function HomePage() {
             Upload File
           </button>
         </div>
+
+        {/* Spinner */}
+        {isProcessing && (
+          <div className="flex justify-center items-center my-4">
+            <div className="flex flex-col items-center">
+              <Spinner />
+              <p>The file is processing.</p>
+            </div>
+          </div>
+        )}
 
         {/* File Download Section */}
         {downloadLink && (
