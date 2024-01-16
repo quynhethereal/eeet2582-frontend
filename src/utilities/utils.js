@@ -14,3 +14,13 @@ export const formatFileSize = (size) => {
   if (size < 1048576) return `${(size / 1024).toFixed(1)} KB`;
   return `${(size / 1048576).toFixed(1)} MB`;
 };
+
+export const formatDate = (dateString) => {
+  const dateObj = new Date(dateString);
+  const formattedDate = dateObj.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  return formattedDate;
+};

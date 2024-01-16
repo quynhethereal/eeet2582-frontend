@@ -5,6 +5,7 @@ import SubscriptionOption from "../components/Subscription/SubscriptionOption";
 import PopupModal from "../components/Subscription/PopupModal";
 import CurrentPlanDisplay from "../components/Subscription/CurrentPlanDisplay";
 
+
 export default function PricePage() {
   let [message, setMessage] = useState("");
   const { user, isAuthenticated } = useAuth();

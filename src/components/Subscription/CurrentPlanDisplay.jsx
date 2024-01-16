@@ -1,5 +1,5 @@
 import React from "react";
-
+import { formatDate } from "../../utilities/utils";
 function CurrentPlanDisplay({
   currentUserPlan,
   isAuthenticated,
@@ -21,17 +21,20 @@ function CurrentPlanDisplay({
       {/* Conditionally display plan details based on status */}
       {currentUserPlan.status === "active" && (
         <p className="text-xl text-gray-600">
-          Next charge on: {currentUserPlan.end_date}
+          Next charge on:
+          <br /> {formatDate(currentUserPlan.end_date)}
         </p>
       )}
       {currentUserPlan.status === "endsoon" && (
         <p className="text-xl text-red-600">
-          Subscription ending on: {currentUserPlan.end_date}
+          Ending on:
+          <br /> {formatDate(currentUserPlan.end_date)}
         </p>
       )}
       {currentUserPlan.status === "trialing" && (
         <p className="text-xl text-red-600">
-          Subscription ending on: {currentUserPlan.end_date}
+          Ending on:
+          <br /> {formatDate(currentUserPlan.end_date)}
         </p>
       )}
       {currentUserPlan.status === "cancelled" && (

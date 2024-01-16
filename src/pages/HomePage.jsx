@@ -55,7 +55,7 @@ export default function HomePage() {
 
   const uploadFile = async () => {
     if (!uploadedFile) return;
-
+    setDownloadLink("");
     const formData = new FormData();
     formData.append("docx_file", uploadedFile);
 
@@ -102,11 +102,11 @@ export default function HomePage() {
 
       const { status, result } = response.data;
       setTaskStatus(status);
-      console.log("Status: ", status);
+
       if (status === "SUCCESS") {
         clearInterval(pollingInterval.current);
         setIsProcessing(false);
-        setDownloadLink(result.processedFileLink);
+        setDownloadLink(result);
       } else if (status === "FAILURE") {
         clearInterval(pollingInterval.current);
         setIsProcessing(false);
@@ -189,7 +189,7 @@ export default function HomePage() {
             <a
               href={downloadLink}
               download
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
+              className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-700"
             >
               Download Processed File
             </a>
