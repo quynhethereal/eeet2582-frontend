@@ -63,7 +63,7 @@ export default function HomePage() {
       try {
         console.log("testing");
         const response = await axios.post(
-          "http://127.0.0.1:8000/api/parse-docx",
+          `${import.meta.env.VITE_SERVER_ORIGIN}/api/parse-docx`,
           formData,
           {
             headers: {
@@ -94,7 +94,7 @@ export default function HomePage() {
   const checkTaskStatus = async (taskId) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/task-status/${taskId}`,
+        `${import.meta.env.VITE_SERVER_ORIGIN}/api/task-status/${taskId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
