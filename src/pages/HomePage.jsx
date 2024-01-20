@@ -61,7 +61,6 @@ export default function HomePage() {
 
     if (token) {
       try {
-        console.log("testing");
         const response = await axios.post(
           `${import.meta.env.VITE_SERVER_ORIGIN}/api/parse-docx`,
           formData,
